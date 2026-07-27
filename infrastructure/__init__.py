@@ -1,0 +1,1 @@
+"""Technische Adapter der FlowWorkbench."""

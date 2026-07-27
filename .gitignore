@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtuelle Umgebungen
+.venv/
+venv/
+
+# Tests und Analyse
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build-Artefakte
+build/
+dist/
+*.egg-info/
+*.spec
+
+# IDE und Betriebssystem
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
