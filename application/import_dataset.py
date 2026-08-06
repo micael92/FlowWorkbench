@@ -14,7 +14,7 @@ DEFAULT_PREVIEW_ROW_COUNT = 100
 
 
 @dataclass
-class ImportDatasetResult:
+class ImportResult:
     """Enthält den geladenen Datensatz und die wichtigsten Importergebnisse."""
 
     source: Path
@@ -38,12 +38,12 @@ class ImportDataset:
         self._loader = loader
         self._preview_row_count = preview_row_count
 
-    def execute(self, path: Path) -> ImportDatasetResult:
+    def execute(self, path: Path) -> ImportResult:
         """Importiert einen Datensatz und gibt Daten, Vorschau und Größe zurück."""
         dataframe = self._loader.load(path)
         row_count, column_count = dataframe.shape
 
-        return ImportDatasetResult(
+        return ImportResult(
             source=path,
             dataframe=dataframe,
             preview=dataframe.head(self._preview_row_count),
