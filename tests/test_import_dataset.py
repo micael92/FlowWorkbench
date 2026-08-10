@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from application.import_dataset import ImportDataset
 from application.exceptions import DatasetLoadError
+from application.flow_dataset import FlowDataset
+from application.import_dataset import ImportDataset
 from infrastructure.dataset_loader import DatasetLoader
 
 
@@ -33,6 +34,7 @@ def test_import_uses_loader_and_returns_dataset_information() -> None:
 
     result = ImportDataset(loader).execute(path)
 
+    assert isinstance(result, FlowDataset)
     assert loader.loaded_path == path
     assert result.source == path
     assert result.dataframe is dataframe

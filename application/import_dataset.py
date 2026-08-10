@@ -2,31 +2,17 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from application.exceptions import DatasetLoadError
+from application.flow_dataset import FlowDataset
 from infrastructure.dataset_loader import DatasetLoader
 
 
 DEFAULT_PREVIEW_ROW_COUNT = 1000
-
-
-@dataclass
-class ImportResult:
-    """Enthält den geladenen Datensatz und die wichtigsten Importergebnisse."""
-
-    source: Path
-    dataframe: pd.DataFrame
-    preview: pd.DataFrame
-    row_count: int
-    column_count: int
-    memory_size_bytes: int
-    missing_value_count: int
-    infinite_value_count: int
 
 
 class ImportDataset:
@@ -43,7 +29,7 @@ class ImportDataset:
         self._loader = loader
         self._preview_row_count = preview_row_count
 
-    def execute(self, path: Path) -> ImportResult:
+    def execute(self, path: Path) -> FlowDataset:
         """Importiert einen Datensatz und gibt Daten, Vorschau und Größe zurück."""
         try:
             dataframe = self._loader.load(path)
@@ -58,7 +44,7 @@ class ImportDataset:
         numeric_data = dataframe.select_dtypes(include="number")
         infinite_value_count = int(np.isinf(numeric_data).sum().sum())
 
-        return ImportResult(
+        return FlowDataset(
             source=path,
             dataframe=dataframe,
             preview=dataframe.head(self._preview_row_count),
