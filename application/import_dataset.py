@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from infrastructure.dataset_loader import DatasetLoader
@@ -22,6 +23,9 @@ class ImportResult:
     preview: pd.DataFrame
     row_count: int
     column_count: int
+    memory_size_bytes: int
+    missing_value_count: int
+    infinite_value_count: int
 
 
 class ImportDataset:
@@ -42,6 +46,10 @@ class ImportDataset:
         """Importiert einen Datensatz und gibt Daten, Vorschau und Größe zurück."""
         dataframe = self._loader.load(path)
         row_count, column_count = dataframe.shape
+        memory_size_bytes = int(dataframe.memory_usage(index=True, deep=True).sum())
+        missing_value_count = int(dataframe.isna().sum().sum())
+        numeric_data = dataframe.select_dtypes(include="number")
+        infinite_value_count = int(np.isinf(numeric_data).sum().sum())
 
         return ImportResult(
             source=path,
@@ -49,4 +57,7 @@ class ImportDataset:
             preview=dataframe.head(self._preview_row_count),
             row_count=row_count,
             column_count=column_count,
+            memory_size_bytes=memory_size_bytes,
+            missing_value_count=missing_value_count,
+            infinite_value_count=infinite_value_count,
         )

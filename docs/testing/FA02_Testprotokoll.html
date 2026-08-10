@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testprotokoll FA02 – Datensatzinformationen anzeigen</title>
+    <style>
+        :root {
+            color: #1f2933;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+        }
+
+        body {
+            margin: 0;
+            background: #ffffff;
+        }
+
+        main {
+            max-width: 277mm;
+            margin: 0 auto;
+            padding: 10mm;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #17365d;
+            font-size: 21px;
+        }
+
+        h2 {
+            margin: 12px 0 5px;
+            color: #17365d;
+            font-size: 14px;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .summary div {
+            padding: 7px 9px;
+            border: 1px solid #9aa5b1;
+            background: #f5f7fa;
+        }
+
+        .summary strong {
+            display: block;
+            margin-bottom: 2px;
+            color: #17365d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 9px;
+        }
+
+        th,
+        td {
+            padding: 6px;
+            border: 1px solid #7b8794;
+            vertical-align: top;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        th {
+            color: #ffffff;
+            background: #17365d;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f5f7fa;
+        }
+
+        .id,
+        .status {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .passed {
+            color: #166534;
+        }
+
+        .not-run {
+            color: #92400e;
+        }
+
+        ol,
+        ul {
+            margin: 0;
+            padding-left: 16px;
+        }
+
+        p {
+            margin: 0 0 5px;
+            line-height: 1.4;
+        }
+
+        .test-summary {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+            padding: 7px 9px;
+            border: 1px solid #9aa5b1;
+            background: #f5f7fa;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+
+        @media print {
+            main {
+                max-width: none;
+                padding: 0;
+            }
+
+            tr {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Testprotokoll FA02 – Datensatzinformationen anzeigen</h1>
+
+    <section class="summary" aria-label="Zusammenfassung">
+        <div><strong>Projekt</strong>FlowWorkbench</div>
+        <div><strong>Testdatum</strong>06.08.2026</div>
+        <div><strong>Gesamtergebnis</strong><span class="passed">1 bestanden</span>, 0 fehlgeschlagen, 0 nicht ausgeführt</div>
+    </section>
+
+    <table>
+        <colgroup>
+            <col style="width: 7%">
+            <col style="width: 13%">
+            <col style="width: 15%">
+            <col style="width: 18%">
+            <col style="width: 18%">
+            <col style="width: 21%">
+            <col style="width: 8%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Testfall-ID</th>
+                <th>Kurzbeschreibung</th>
+                <th>Vorbedingungen</th>
+                <th>Eingabedaten / Aktionen</th>
+                <th>Erwartetes Ergebnis</th>
+                <th>Tatsächliches Ergebnis</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="id">FA02-T01</td>
+                <td>FA-02: Datensatzinformationen nach erfolgreichem CSV-Import anzeigen</td>
+                <td>
+                    <ul>
+                        <li>Die Anwendung ist installiert beziehungsweise ausführbar.</li>
+                        <li>Ein geeigneter CSV-Testdatensatz ist vorhanden.</li>
+                        <li>Der Testdatensatz kann durch die Anwendung importiert werden.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>FlowWorkbench starten.</li>
+                        <li>Schaltfläche „Datensatz importieren“ auswählen.</li>
+                        <li>CSV-Testdatensatz im Dateidialog auswählen.</li>
+                        <li>Informationsbereich nach Abschluss des Imports prüfen.</li>
+                        <li>Angezeigte Werte mit den bekannten Eigenschaften des Testdatensatzes vergleichen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li>Der Datensatz wird erfolgreich importiert.</li>
+                        <li>Zeilenanzahl, Spaltenanzahl beziehungsweise Anzahl der Features, Speichergröße, fehlende Werte und unendliche Werte werden angezeigt.</li>
+                        <li>Die Werte entsprechen dem importierten Datensatz.</li>
+                        <li>Die Anwendung bleibt bedienbar und stürzt nicht ab.</li>
+                    </ul>
+                </td>
+                <td>Der Datensatz wurde erfolgreich importiert. Alle fünf geforderten Datensatzinformationen wurden angezeigt. Die angezeigten Werte entsprachen den bekannten Eigenschaften des Testdatensatzes. Es trat kein Fehler oder Absturz auf.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+        </tbody>
+    </table>
+
+</main>
+</body>
+</html>

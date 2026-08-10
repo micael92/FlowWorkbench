@@ -18,6 +18,19 @@ from application.import_dataset import ImportDataset
 from domain.exceptions import DatasetLoadError
 
 
+def format_byte_size(size_bytes: int) -> str:
+    """Formatiert eine Byte-Anzahl kompakt für die Benutzeroberfläche."""
+    size = float(size_bytes)
+    units = ("B", "KiB", "MiB", "GiB", "TiB")
+
+    for unit in units[:-1]:
+        if size < 1024:
+            return f"{size:.0f} {unit}" if unit == "B" else f"{size:.1f} {unit}"
+        size /= 1024
+
+    return f"{size:.1f} {units[-1]}"
+
+
 class MainWindow(QMainWindow):
     """Zeigt die Oberfläche zum Importieren eines CSV-Datensatzes."""
 
@@ -55,6 +68,8 @@ class MainWindow(QMainWindow):
         if not file_path:
             return
 
+        self._status_label.setText("Noch kein Datensatz geladen.")
+
         try:
             result = self._import_dataset.execute(Path(file_path))
         except DatasetLoadError as error:
@@ -64,5 +79,8 @@ class MainWindow(QMainWindow):
         self._status_label.setText(
             f"Datei: {result.source.name}\n"
             f"Zeilen: {result.row_count}\n"
-            f"Spalten: {result.column_count}"
+            f"Spalten: {result.column_count}\n"
+            f"Speichergröße: {format_byte_size(result.memory_size_bytes)}\n"
+            f"Fehlende Werte: {result.missing_value_count}\n"
+            f"Unendliche Werte: {result.infinite_value_count}"
         )

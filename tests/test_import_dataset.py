@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -37,6 +38,38 @@ def test_import_uses_loader_and_returns_dataset_information() -> None:
     assert result.dataframe is dataframe
     assert result.row_count == 3
     assert result.column_count == 2
+    assert result.missing_value_count == 0
+    assert result.infinite_value_count == 0
+
+
+def test_import_counts_missing_and_infinite_values_in_mixed_data() -> None:
+    dataframe = pd.DataFrame(
+        {
+            "number": [1.0, np.inf, -np.inf, np.nan],
+            "other_number": [np.nan, 2.0, 3.0, 4.0],
+            "text": ["normal", "inf", None, "-inf"],
+            "category": pd.Series(["A", "B", "A", None], dtype="category"),
+        }
+    )
+
+    result = ImportDataset(RecordingLoader(dataframe)).execute(Path("dataset.csv"))
+
+    assert result.row_count == 4
+    assert result.column_count == 4
+    assert result.missing_value_count == 4
+    assert result.infinite_value_count == 2
+
+
+def test_import_returns_positive_python_int_memory_size() -> None:
+    dataframe = pd.DataFrame({"text": ["a longer text value", "another value"]})
+
+    result = ImportDataset(RecordingLoader(dataframe)).execute(Path("dataset.csv"))
+
+    assert type(result.memory_size_bytes) is int
+    assert result.memory_size_bytes > 0
+    assert result.memory_size_bytes == int(
+        dataframe.memory_usage(index=True, deep=True).sum()
+    )
 
 
 def test_import_limits_preview_to_configured_number_of_rows() -> None:
