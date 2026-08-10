@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from application.exceptions import DatasetLoadError
 from infrastructure.dataset_loader import DatasetLoader
 
 
@@ -44,7 +45,13 @@ class ImportDataset:
 
     def execute(self, path: Path) -> ImportResult:
         """Importiert einen Datensatz und gibt Daten, Vorschau und Größe zurück."""
-        dataframe = self._loader.load(path)
+        try:
+            dataframe = self._loader.load(path)
+        except (OSError, pd.errors.ParserError) as error:
+            raise DatasetLoadError(
+                f"Datensatz konnte nicht geladen werden: {path}"
+            ) from error
+
         row_count, column_count = dataframe.shape
         memory_size_bytes = int(dataframe.memory_usage(index=True, deep=True).sum())
         missing_value_count = int(dataframe.isna().sum().sum())

@@ -41,6 +41,7 @@ class MainWindow(QMainWindow):
         self._import_dataset = import_dataset
 
         self.setWindowTitle("FlowWorkbench")
+        self.resize(1200, 800)
 
         heading = QLabel("FlowWorkbench")
         heading.setStyleSheet("font-size: 24px; font-weight: bold;")
