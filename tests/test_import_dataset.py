@@ -82,12 +82,18 @@ def test_import_limits_preview_to_configured_number_of_rows() -> None:
     pd.testing.assert_frame_equal(result.preview, dataframe.head(2))
 
 
-def test_import_uses_all_rows_below_preview_limit() -> None:
-    dataframe = pd.DataFrame({"number": [1, 2]})
+def test_import_limits_default_preview_to_1000_rows() -> None:
+    dataframe = pd.DataFrame({"number": range(1001)})
 
-    result = ImportDataset(RecordingLoader(dataframe), preview_row_count=3).execute(
-        Path("dataset.csv")
-    )
+    result = ImportDataset(RecordingLoader(dataframe)).execute(Path("dataset.csv"))
+
+    pd.testing.assert_frame_equal(result.preview, dataframe.head(1000))
+
+
+def test_import_uses_all_rows_below_preview_limit() -> None:
+    dataframe = pd.DataFrame({"number": range(999)})
+
+    result = ImportDataset(RecordingLoader(dataframe)).execute(Path("dataset.csv"))
 
     pd.testing.assert_frame_equal(result.preview, dataframe)
 

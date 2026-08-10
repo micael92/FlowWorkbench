@@ -10,12 +10,14 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
     QPushButton,
+    QTableView,
     QVBoxLayout,
     QWidget,
 )
 
 from application.import_dataset import ImportDataset
 from domain.exceptions import DatasetLoadError
+from presentation.data_table_model import DataTableModel
 
 
 def format_byte_size(size_bytes: int) -> str:
@@ -47,11 +49,14 @@ class MainWindow(QMainWindow):
         import_button.clicked.connect(self._select_and_import_dataset)
 
         self._status_label = QLabel("Noch kein Datensatz geladen.")
+        self._data_table = QTableView()
+        self._data_table_model: DataTableModel | None = None
 
         layout = QVBoxLayout()
         layout.addWidget(heading)
         layout.addWidget(import_button)
         layout.addWidget(self._status_label)
+        layout.addWidget(self._data_table, 1)
 
         central_widget = QWidget()
         central_widget.setLayout(layout)
@@ -84,3 +89,5 @@ class MainWindow(QMainWindow):
             f"Fehlende Werte: {result.missing_value_count}\n"
             f"Unendliche Werte: {result.infinite_value_count}"
         )
+        self._data_table_model = DataTableModel(result.preview)
+        self._data_table.setModel(self._data_table_model)

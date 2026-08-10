@@ -11,7 +11,7 @@ import pandas as pd
 from infrastructure.dataset_loader import DatasetLoader
 
 
-DEFAULT_PREVIEW_ROW_COUNT = 100
+DEFAULT_PREVIEW_ROW_COUNT = 1000
 
 
 @dataclass
