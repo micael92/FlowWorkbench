@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from domain.exceptions import DatasetLoadError
+from application.exceptions import DatasetLoadError
 
 
 class DatasetLoader:

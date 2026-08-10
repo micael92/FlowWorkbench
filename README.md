@@ -36,7 +36,7 @@ FlowWorkbench verarbeitet bereits vorhandene flowbasierte Datensätze.
 
 ## Architektur
 
-Die Anwendung verwendet eine Schichtenarchitektur mit vier Bereichen:
+Die Anwendung verwendet eine Schichtenarchitektur mit drei Bereichen:
 
 ```text
 presentation
@@ -45,9 +45,7 @@ presentation
 application
      │
      ▼
-domain
-
-infrastructure ── implementiert technische Adapter und Ports
+infrastructure
 ```
 
 Die Schichten besitzen klar voneinander getrennte Verantwortlichkeiten. Die Schichten dienen der übersichtlichen Trennung der Verantwortlichkeiten.
@@ -58,9 +56,8 @@ Lösungen bevorzugt.
 | Schicht | Verantwortung |
 |---|---|
 | `presentation` | Grafische Benutzeroberfläche, Dialoge und Darstellung |
-| `application` | Anwendungsfälle, Ablaufsteuerung und Koordination |
-| `domain` | Fachmodelle, fachliche Regeln und technologieunabhängige Logik |
-| `infrastructure` | Technische Adapter für Dateien, Datenverarbeitung und Visualisierung |
+| `application` | Anwendungsfälle, Ergebnisobjekte, Ablaufsteuerung und anwendungsbezogene Fehler |
+| `infrastructure` | Dateizugriff sowie technische Umsetzung von Import, Export, Datenverarbeitung und Visualisierung |
 | `tests` | Automatisierte Tests der Anwendung |
 
 Technische Details und Architekturentscheidungen werden in
@@ -71,7 +68,6 @@ Technische Details und Architekturentscheidungen werden in
 ```text
 FlowWorkbench/
 ├── application/
-├── domain/
 ├── infrastructure/
 ├── presentation/
 ├── tests/

@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from application.import_dataset import ImportDataset
-from domain.exceptions import DatasetLoadError
+from application.exceptions import DatasetLoadError
 from infrastructure.dataset_loader import DatasetLoader
 
 

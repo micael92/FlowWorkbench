@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from domain.exceptions import DatasetExportError
+from application.exceptions import DatasetExportError
 
 
 def export_csv(dataframe: pd.DataFrame, path: Path) -> None:

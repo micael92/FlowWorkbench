@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 )
 
 from application.import_dataset import ImportDataset
-from domain.exceptions import DatasetLoadError
+from application.exceptions import DatasetLoadError
 from presentation.data_table_model import DataTableModel
 
 
