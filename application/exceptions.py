@@ -15,3 +15,7 @@ class DatasetExportError(FlowWorkbenchError):
 
 class StatisticsCalculationError(FlowWorkbenchError):
     """Statistische Kennzahlen konnten nicht berechnet werden."""
+
+
+class FeatureRemovalError(FlowWorkbenchError):
+    """Ausgewählte Merkmale konnten nicht entfernt werden."""

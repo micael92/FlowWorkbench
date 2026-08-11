@@ -4,10 +4,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
     QFileDialog,
     QInputDialog,
     QLabel,
+    QListWidget,
+    QListWidgetItem,
     QMainWindow,
     QMessageBox,
     QPushButton,
@@ -17,9 +22,14 @@ from PySide6.QtWidgets import (
 )
 
 from application.calculate_statistics import CalculateStatistics
-from application.exceptions import DatasetLoadError, StatisticsCalculationError
+from application.exceptions import (
+    DatasetLoadError,
+    FeatureRemovalError,
+    StatisticsCalculationError,
+)
 from application.flow_dataset import FlowDataset
 from application.import_dataset import ImportDataset
+from application.remove_features import RemoveFeatures
 from application.statistic_result import StatisticResult
 from presentation.data_table_model import DataTableModel
 
@@ -44,10 +54,12 @@ class MainWindow(QMainWindow):
         self,
         import_dataset: ImportDataset,
         calculate_statistics: CalculateStatistics,
+        remove_features: RemoveFeatures,
     ) -> None:
         super().__init__()
         self._import_dataset = import_dataset
         self._calculate_statistics = calculate_statistics
+        self._remove_features = remove_features
         self._dataset: FlowDataset | None = None
 
         self.setWindowTitle("FlowWorkbench")
@@ -63,6 +75,12 @@ class MainWindow(QMainWindow):
         self._statistics_button.setEnabled(False)
         self._statistics_button.clicked.connect(self._select_and_calculate_statistics)
 
+        self._remove_features_button = QPushButton("Merkmale entfernen")
+        self._remove_features_button.setEnabled(False)
+        self._remove_features_button.clicked.connect(
+            self._select_and_remove_features
+        )
+
         self._status_label = QLabel("Noch kein Datensatz geladen.")
         self._data_table = QTableView()
         self._data_table_model: DataTableModel | None = None
@@ -71,6 +89,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(heading)
         layout.addWidget(import_button)
         layout.addWidget(self._statistics_button)
+        layout.addWidget(self._remove_features_button)
         layout.addWidget(self._status_label)
         layout.addWidget(self._data_table, 1)
 
@@ -108,18 +127,85 @@ class MainWindow(QMainWindow):
                 return
             result.label_column = label_column
 
-        self._status_label.setText(
-            f"Datei: {result.source.name}\n"
-            f"Zeilen: {result.row_count}\n"
-            f"Spalten: {result.column_count}\n"
-            f"Speichergröße: {format_byte_size(result.memory_size_bytes)}\n"
-            f"Fehlende Werte: {result.missing_value_count}\n"
-            f"Unendliche Werte: {result.infinite_value_count}"
-        )
-        self._data_table_model = DataTableModel(result.preview)
-        self._data_table.setModel(self._data_table_model)
         self._dataset = result
         self._statistics_button.setEnabled(True)
+        self._remove_features_button.setEnabled(True)
+        self._display_dataset()
+
+    def _select_and_remove_features(self) -> None:
+        """Lässt mehrere Merkmale auswählen und entfernt sie gemeinsam."""
+        if self._dataset is None:
+            return
+
+        removable_features = [
+            column
+            for column in self._dataset.dataframe.columns
+            if column != self._dataset.label_column
+        ]
+        if not removable_features:
+            QMessageBox.information(
+                self,
+                "Keine entfernbaren Merkmale",
+                "Der Datensatz enthält keine entfernbaren Merkmale.",
+            )
+            return
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Merkmale entfernen")
+        feature_list = QListWidget(dialog)
+        for feature_name in removable_features:
+            item = QListWidgetItem(str(feature_name), feature_list)
+            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            item.setCheckState(Qt.CheckState.Unchecked)
+
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok
+            | QDialogButtonBox.StandardButton.Cancel,
+            parent=dialog,
+        )
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(QLabel("Zu entfernende Merkmale auswählen:"))
+        layout.addWidget(feature_list)
+        layout.addWidget(buttons)
+
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        selected_features = [
+            feature_list.item(index).text()
+            for index in range(feature_list.count())
+            if feature_list.item(index).checkState() == Qt.CheckState.Checked
+        ]
+        if not selected_features:
+            return
+
+        try:
+            self._remove_features.execute(self._dataset, selected_features)
+        except FeatureRemovalError as error:
+            QMessageBox.warning(self, "Entfernen nicht möglich", str(error))
+            return
+
+        self._display_dataset()
+
+    def _display_dataset(self) -> None:
+        """Aktualisiert Datensatzinformationen und Vorschau."""
+        if self._dataset is None:
+            return
+
+        self._status_label.setText(
+            f"Datei: {self._dataset.source.name}\n"
+            f"Zeilen: {self._dataset.row_count}\n"
+            f"Spalten: {self._dataset.column_count}\n"
+            "Speichergröße: "
+            f"{format_byte_size(self._dataset.memory_size_bytes)}\n"
+            f"Fehlende Werte: {self._dataset.missing_value_count}\n"
+            f"Unendliche Werte: {self._dataset.infinite_value_count}"
+        )
+        self._data_table_model = DataTableModel(self._dataset.preview)
+        self._data_table.setModel(self._data_table_model)
 
     def _select_and_calculate_statistics(self) -> None:
         """Lässt ein numerisches Merkmal auswählen und zeigt seine Kennzahlen."""
