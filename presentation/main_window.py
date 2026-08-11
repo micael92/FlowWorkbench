@@ -89,15 +89,24 @@ class MainWindow(QMainWindow):
         if not file_path:
             return
 
-        self._status_label.setText("Noch kein Datensatz geladen.")
-        self._dataset = None
-        self._statistics_button.setEnabled(False)
-
         try:
             result = self._import_dataset.execute(Path(file_path))
         except DatasetLoadError as error:
             QMessageBox.critical(self, "Import fehlgeschlagen", str(error))
             return
+
+        if result.label_column is None:
+            label_column, confirmed = QInputDialog.getItem(
+                self,
+                "Label-Spalte auswählen",
+                "Label-Spalte:",
+                list(result.dataframe.columns),
+                0,
+                False,
+            )
+            if not confirmed:
+                return
+            result.label_column = label_column
 
         self._status_label.setText(
             f"Datei: {result.source.name}\n"

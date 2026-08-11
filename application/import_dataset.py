@@ -13,6 +13,7 @@ from infrastructure.dataset_loader import DatasetLoader
 
 
 DEFAULT_PREVIEW_ROW_COUNT = 1000
+KNOWN_LABEL_COLUMN_NAMES = {"label", "labels", "class", "target"}
 
 
 class ImportDataset:
@@ -43,6 +44,7 @@ class ImportDataset:
         missing_value_count = int(dataframe.isna().sum().sum())
         numeric_data = dataframe.select_dtypes(include="number")
         infinite_value_count = int(np.isinf(numeric_data).sum().sum())
+        label_column = self._detect_label_column(dataframe)
 
         return FlowDataset(
             source=path,
@@ -53,4 +55,16 @@ class ImportDataset:
             memory_size_bytes=memory_size_bytes,
             missing_value_count=missing_value_count,
             infinite_value_count=infinite_value_count,
+            label_column=label_column,
         )
+
+    @staticmethod
+    def _detect_label_column(dataframe: pd.DataFrame) -> str | None:
+        """Erkennt genau eine bekannte Bezeichnung als Label-Spalte."""
+        candidates = [
+            column
+            for column in dataframe.columns
+            if isinstance(column, str)
+            and column.lower() in KNOWN_LABEL_COLUMN_NAMES
+        ]
+        return candidates[0] if len(candidates) == 1 else None

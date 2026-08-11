@@ -18,3 +18,4 @@ class FlowDataset:
     memory_size_bytes: int
     missing_value_count: int
     infinite_value_count: int
+    label_column: str | None

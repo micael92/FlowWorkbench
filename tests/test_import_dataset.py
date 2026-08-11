@@ -100,6 +100,46 @@ def test_import_uses_all_rows_below_preview_limit() -> None:
     pd.testing.assert_frame_equal(result.preview, dataframe)
 
 
+@pytest.mark.parametrize(
+    ("column_name", "expected_label_column"),
+    [
+        ("Label", "Label"),
+        ("LABEL", "LABEL"),
+        ("labels", "labels"),
+        ("class", "class"),
+        ("target", "target"),
+        ("TARGET", "TARGET"),
+    ],
+)
+def test_import_detects_known_label_column_names_case_insensitively(
+    column_name: str,
+    expected_label_column: str,
+) -> None:
+    dataframe = pd.DataFrame({column_name: ["BENIGN"], "Duration": [1]})
+
+    result = ImportDataset(RecordingLoader(dataframe)).execute(Path("dataset.csv"))
+
+    assert result.label_column == expected_label_column
+
+
+def test_import_leaves_label_column_unset_without_known_name() -> None:
+    dataframe = pd.DataFrame({"Category": ["BENIGN"], "Duration": [1]})
+
+    result = ImportDataset(RecordingLoader(dataframe)).execute(Path("dataset.csv"))
+
+    assert result.label_column is None
+
+
+def test_import_leaves_label_column_unset_for_multiple_candidates() -> None:
+    dataframe = pd.DataFrame(
+        {"Label": ["BENIGN"], "Class": ["normal"], "Duration": [1]}
+    )
+
+    result = ImportDataset(RecordingLoader(dataframe)).execute(Path("dataset.csv"))
+
+    assert result.label_column is None
+
+
 @pytest.mark.parametrize("preview_row_count", [0, -1])
 def test_import_rejects_invalid_preview_size(preview_row_count: int) -> None:
     loader = RecordingLoader(pd.DataFrame())

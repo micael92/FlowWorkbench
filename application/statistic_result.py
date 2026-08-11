@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class StatisticResult:
-    """Enthält die berechneten Kennzahlen eines numerischen Merkmals."""
+    """Enthält die berechneten, unveränderlichen Kennzahlen eines numerischen Merkmals."""
 
     feature_name: str
     minimum: float

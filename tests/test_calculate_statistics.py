@@ -22,6 +22,7 @@ def create_dataset(dataframe: pd.DataFrame) -> FlowDataset:
         memory_size_bytes=0,
         missing_value_count=0,
         infinite_value_count=0,
+        label_column=None,
     )
 
 
