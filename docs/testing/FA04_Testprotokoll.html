@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testprotokoll FA04 – Statistische Kennzahlen berechnen</title>
+    <style>
+        :root {
+            color: #1f2933;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+        }
+
+        body {
+            margin: 0;
+            background: #ffffff;
+        }
+
+        main {
+            max-width: 277mm;
+            margin: 0 auto;
+            padding: 10mm;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #17365d;
+            font-size: 21px;
+        }
+
+        h2 {
+            margin: 12px 0 5px;
+            color: #17365d;
+            font-size: 14px;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .summary div {
+            padding: 7px 9px;
+            border: 1px solid #9aa5b1;
+            background: #f5f7fa;
+        }
+
+        .summary strong {
+            display: block;
+            margin-bottom: 2px;
+            color: #17365d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 9px;
+        }
+
+        th,
+        td {
+            padding: 6px;
+            border: 1px solid #7b8794;
+            vertical-align: top;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        th {
+            color: #ffffff;
+            background: #17365d;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f5f7fa;
+        }
+
+        .id,
+        .status {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .passed {
+            color: #166534;
+        }
+
+        .not-run {
+            color: #92400e;
+        }
+
+        ol,
+        ul {
+            margin: 0;
+            padding-left: 16px;
+        }
+
+        p {
+            margin: 0 0 5px;
+            line-height: 1.4;
+        }
+
+        .test-summary {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+            padding: 7px 9px;
+            border: 1px solid #9aa5b1;
+            background: #f5f7fa;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+
+        @media print {
+            main {
+                max-width: none;
+                padding: 0;
+            }
+
+            tr {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Testprotokoll FA04 – Statistische Kennzahlen berechnen</h1>
+
+    <section class="summary" aria-label="Zusammenfassung">
+        <div><strong>Projekt</strong>FlowWorkbench</div>
+        <div><strong>Testdatum</strong>10.08.2026</div>
+        <div><strong>Gesamtergebnis</strong><span class="passed">3 bestanden</span>, 0 fehlgeschlagen, 0 nicht ausgeführt<br>Vollständige Testsuite: 15 bestanden</div>
+    </section>
+
+    <table>
+        <colgroup>
+            <col style="width: 7%">
+            <col style="width: 13%">
+            <col style="width: 15%">
+            <col style="width: 18%">
+            <col style="width: 18%">
+            <col style="width: 21%">
+            <col style="width: 8%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Testfall-ID</th>
+                <th>Kurzbeschreibung</th>
+                <th>Vorbedingungen</th>
+                <th>Eingabedaten / Aktionen</th>
+                <th>Erwartetes Ergebnis</th>
+                <th>Tatsächliches Ergebnis</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="id">FA04-T01</td>
+                <td>Kennzahlen für ein numerisches Merkmal berechnen</td>
+                <td>
+                    <ul>
+                        <li>Ein <code>FlowDataset</code> mit der numerischen Spalte <code>packets</code> liegt vor.</li>
+                        <li>Die Spalte enthält die Werte 1, 2, 3 und 4.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li><code>CalculateStatistics.execute(dataset, "packets")</code> aufrufen.</li>
+                        <li>Typ, Merkmalsname und alle Kennzahlen des Ergebnisses prüfen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li>Das Ergebnis ist ein <code>StatisticResult</code>.</li>
+                        <li><code>feature_name</code> ist <code>packets</code>.</li>
+                        <li>Minimum: 1, Maximum: 4, Mittelwert: 2,5 und Median: 2,5.</li>
+                        <li>Die Stichproben-Standardabweichung beträgt gerundet 1,290994.</li>
+                    </ul>
+                </td>
+                <td>Der Use Case gab ein <code>StatisticResult</code> mit dem richtigen Merkmalsnamen sowie den erwarteten Werten für Minimum, Maximum, Mittelwert, Median und Standardabweichung zurück.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+            <tr>
+                <td class="id">FA04-T02</td>
+                <td>Nicht numerisches Merkmal ablehnen</td>
+                <td>
+                    <ul>
+                        <li>Ein <code>FlowDataset</code> mit der Textspalte <code>protocol</code> liegt vor.</li>
+                        <li>Die Spalte enthält die Werte <code>TCP</code> und <code>UDP</code>.</li>
+                    </ul>
+                </td>
+                <td><code>CalculateStatistics.execute(dataset, "protocol")</code> aufrufen.</td>
+                <td>
+                    <ul>
+                        <li>Die Spalte wird nicht statistisch ausgewertet.</li>
+                        <li>Ein <code>StatisticsCalculationError</code> mit verständlichem Hinweis auf das nicht numerische Merkmal wird ausgelöst.</li>
+                    </ul>
+                </td>
+                <td>Der Use Case lehnte die Textspalte kontrolliert ab und löste einen <code>StatisticsCalculationError</code> mit dem Hinweis aus, dass das Merkmal nicht numerisch auswertbar ist.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+            <tr>
+                <td class="id">FA04-T03</td>
+                <td>NaN-Werte entsprechend dem pandas-Verhalten behandeln</td>
+                <td>
+                    <ul>
+                        <li>Ein <code>FlowDataset</code> mit der numerischen Spalte <code>duration</code> liegt vor.</li>
+                        <li>Die Spalte enthält die Werte 1, NaN und 3.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li><code>CalculateStatistics.execute(dataset, "duration")</code> aufrufen.</li>
+                        <li>Alle zurückgegebenen Kennzahlen prüfen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li>Der NaN-Wert wird bei den Aggregationen gemäß dem pandas-Standard übersprungen.</li>
+                        <li>Minimum: 1, Maximum: 3, Mittelwert: 2 und Median: 2.</li>
+                        <li>Die Stichproben-Standardabweichung entspricht der Quadratwurzel aus 2.</li>
+                        <li>Der Datensatz wird nicht verändert.</li>
+                    </ul>
+                </td>
+                <td>Die Kennzahlen wurden aus den beiden vorhandenen Zahlen korrekt berechnet. Der NaN-Wert wurde entsprechend dem pandas-Standard behandelt; eine Vorverarbeitung oder Veränderung des Datensatzes fand nicht statt.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+        </tbody>
+    </table>
+
+</main>
+</body>
+</html>

@@ -6,6 +6,7 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
+from application.calculate_statistics import CalculateStatistics
 from application.import_dataset import ImportDataset
 from infrastructure.dataset_loader import DatasetLoader
 from presentation.main_window import MainWindow
@@ -16,7 +17,8 @@ def main() -> int:
     app = QApplication(sys.argv)
     loader = DatasetLoader()
     import_dataset = ImportDataset(loader)
-    window = MainWindow(import_dataset)
+    calculate_statistics = CalculateStatistics()
+    window = MainWindow(import_dataset, calculate_statistics)
     window.show()
     return app.exec()
 

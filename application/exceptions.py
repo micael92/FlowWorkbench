@@ -11,3 +11,7 @@ class DatasetLoadError(FlowWorkbenchError):
 
 class DatasetExportError(FlowWorkbenchError):
     """Ein Datensatz konnte nicht exportiert werden."""
+
+
+class StatisticsCalculationError(FlowWorkbenchError):
+    """Statistische Kennzahlen konnten nicht berechnet werden."""
