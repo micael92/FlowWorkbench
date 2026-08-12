@@ -23,11 +23,13 @@ from PySide6.QtWidgets import (
 
 from application.calculate_statistics import CalculateStatistics
 from application.exceptions import (
+    DatasetExportError,
     DatasetLoadError,
     FeatureRemovalError,
     StatisticsCalculationError,
 )
 from application.flow_dataset import FlowDataset
+from application.export_dataset import ExportDataset
 from application.import_dataset import ImportDataset
 from application.remove_features import RemoveFeatures
 from application.statistic_result import StatisticResult
@@ -55,11 +57,13 @@ class MainWindow(QMainWindow):
         import_dataset: ImportDataset,
         calculate_statistics: CalculateStatistics,
         remove_features: RemoveFeatures,
+        export_dataset: ExportDataset,
     ) -> None:
         super().__init__()
         self._import_dataset = import_dataset
         self._calculate_statistics = calculate_statistics
         self._remove_features = remove_features
+        self._export_dataset = export_dataset
         self._dataset: FlowDataset | None = None
 
         self.setWindowTitle("FlowWorkbench")
@@ -81,6 +85,10 @@ class MainWindow(QMainWindow):
             self._select_and_remove_features
         )
 
+        self._export_button = QPushButton("Datensatz exportieren")
+        self._export_button.setEnabled(False)
+        self._export_button.clicked.connect(self._select_and_export_dataset)
+
         self._status_label = QLabel("Noch kein Datensatz geladen.")
         self._data_table = QTableView()
         self._data_table_model: DataTableModel | None = None
@@ -90,6 +98,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(import_button)
         layout.addWidget(self._statistics_button)
         layout.addWidget(self._remove_features_button)
+        layout.addWidget(self._export_button)
         layout.addWidget(self._status_label)
         layout.addWidget(self._data_table, 1)
 
@@ -130,7 +139,41 @@ class MainWindow(QMainWindow):
         self._dataset = result
         self._statistics_button.setEnabled(True)
         self._remove_features_button.setEnabled(True)
+        self._export_button.setEnabled(True)
         self._display_dataset()
+
+    def _select_and_export_dataset(self) -> None:
+        """Lässt einen Zielpfad auswählen und exportiert den aktuellen Datensatz."""
+        if self._dataset is None:
+            return
+
+        suggested_path = self._dataset.source.with_name(
+            f"{self._dataset.source.stem}_export.csv"
+        )
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Datensatz exportieren",
+            str(suggested_path),
+            "CSV-Dateien (*.csv)",
+        )
+        if not file_path:
+            return
+
+        export_path = Path(file_path)
+        if export_path.suffix.lower() != ".csv":
+            export_path = Path(f"{export_path}.csv")
+
+        try:
+            self._export_dataset.execute(self._dataset, export_path)
+        except DatasetExportError as error:
+            QMessageBox.critical(self, "Export fehlgeschlagen", str(error))
+            return
+
+        QMessageBox.information(
+            self,
+            "Export erfolgreich",
+            f"Der Datensatz wurde exportiert:\n{export_path}",
+        )
 
     def _select_and_remove_features(self) -> None:
         """Lässt mehrere Merkmale auswählen und entfernt sie gemeinsam."""

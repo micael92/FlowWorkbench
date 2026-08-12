@@ -7,6 +7,7 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from application.calculate_statistics import CalculateStatistics
+from application.export_dataset import ExportDataset
 from application.import_dataset import ImportDataset
 from application.remove_features import RemoveFeatures
 from infrastructure.dataset_loader import DatasetLoader
@@ -20,7 +21,10 @@ def main() -> int:
     import_dataset = ImportDataset(loader)
     calculate_statistics = CalculateStatistics()
     remove_features = RemoveFeatures()
-    window = MainWindow(import_dataset, calculate_statistics, remove_features)
+    export_dataset = ExportDataset()
+    window = MainWindow(
+        import_dataset, calculate_statistics, remove_features, export_dataset
+    )
     window.show()
     return app.exec()
 
