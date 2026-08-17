@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testprotokoll FA08 – Daten sortieren</title>
+    <style>
+        :root {
+            color: #1f2933;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+        }
+
+        body {
+            margin: 0;
+            background: #ffffff;
+        }
+
+        main {
+            max-width: 277mm;
+            margin: 0 auto;
+            padding: 10mm;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #17365d;
+            font-size: 21px;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .summary div {
+            padding: 7px 9px;
+            border: 1px solid #9aa5b1;
+            background: #f5f7fa;
+        }
+
+        .summary strong {
+            display: block;
+            margin-bottom: 2px;
+            color: #17365d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 9px;
+        }
+
+        th,
+        td {
+            padding: 6px;
+            border: 1px solid #7b8794;
+            vertical-align: top;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        th {
+            color: #ffffff;
+            background: #17365d;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f5f7fa;
+        }
+
+        .id,
+        .status {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .passed {
+            color: #166534;
+        }
+
+        ol,
+        ul {
+            margin: 0;
+            padding-left: 16px;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+
+        @media print {
+            main {
+                max-width: none;
+                padding: 0;
+            }
+
+            tr {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Testprotokoll FA08 – Daten sortieren</h1>
+
+    <section class="summary" aria-label="Zusammenfassung">
+        <div><strong>Projekt</strong>FlowWorkbench</div>
+        <div><strong>Testdatum</strong>17.08.2026</div>
+        <div><strong>Gesamtergebnis</strong><span class="passed">3 bestanden</span>, 0 fehlgeschlagen, 0 nicht ausgeführt<br>Vollständige Testsuite: 48 bestanden</div>
+    </section>
+
+    <table>
+        <colgroup>
+            <col style="width: 7%">
+            <col style="width: 13%">
+            <col style="width: 15%">
+            <col style="width: 18%">
+            <col style="width: 18%">
+            <col style="width: 21%">
+            <col style="width: 8%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Testfall-ID</th>
+                <th>Kurzbeschreibung</th>
+                <th>Vorbedingungen</th>
+                <th>Eingabedaten / Aktionen</th>
+                <th>Erwartetes Ergebnis</th>
+                <th>Tatsächliches Ergebnis</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="id">FA08-T01</td>
+                <td>Datenvorschau über Spaltenüberschrift auf- und absteigend sortieren</td>
+                <td>
+                    <ul>
+                        <li>FlowWorkbench ist gestartet.</li>
+                        <li>Ein gültiger CSV-Datensatz steht zur Verfügung.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>CSV-Datensatz importieren.</li>
+                        <li>Spaltenüberschrift in der Datenvorschau anklicken.</li>
+                        <li>Aufsteigende Reihenfolge prüfen.</li>
+                        <li>Spaltenüberschrift erneut anklicken und absteigende Reihenfolge prüfen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li>Die sichtbaren Zeilen werden nach der ausgewählten Spalte aufsteigend sortiert.</li>
+                        <li>Ein weiterer Klick wechselt zur absteigenden Sortierung.</li>
+                    </ul>
+                </td>
+                <td>Der Datensatz wurde erfolgreich importiert. Die Datenvorschau ließ sich über die Spaltenüberschriften aufsteigend und absteigend sortieren. Die jeweilige Reihenfolge wurde manuell geprüft und entsprach der gewählten Sortierrichtung.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+            <tr>
+                <td class="id">FA08-T02</td>
+                <td>Numerische Werte nach ihrem Zahlenwert sortieren</td>
+                <td>
+                    <ul>
+                        <li>Eine Datenvorschau mit der numerischen Spalte <code>packets</code> liegt vor.</li>
+                        <li>Die Spalte enthält die Werte <code>10</code>, <code>2</code> und <code>1</code>.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Spalte <code>packets</code> aufsteigend sortieren.</li>
+                        <li>Sichtbare Reihenfolge prüfen.</li>
+                        <li>Danach absteigend sortieren und erneut prüfen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li>Aufsteigend erscheint <code>1, 2, 10</code>.</li>
+                        <li>Absteigend erscheint <code>10, 2, 1</code>.</li>
+                        <li>Der Wert <code>10</code> wird nicht wie ein Text zwischen <code>1</code> und <code>2</code> eingeordnet.</li>
+                    </ul>
+                </td>
+                <td>Der automatisierte Test sortierte die Werte aufsteigend als <code>1, 2, 10</code> und absteigend als <code>10, 2, 1</code>. Die numerische Sortierung war in beiden Richtungen korrekt.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+            <tr>
+                <td class="id">FA08-T03</td>
+                <td>Sortierung verändert weder Vorschau noch vollständigen Datensatz</td>
+                <td>
+                    <ul>
+                        <li>Ein geladener Datensatz und seine Datenvorschau liegen vor.</li>
+                        <li>Der Inhalt beider Tabellen wurde vor der Sortierung festgehalten.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Die sichtbare Vorschau nach einer numerischen Spalte sortieren.</li>
+                        <li>Sortierte Anzeige prüfen.</li>
+                        <li>Vorschau und vollständigen Datensatz mit ihrem jeweiligen Ausgangszustand vergleichen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li>Nur die sichtbare Reihenfolge der Tabelle ändert sich.</li>
+                        <li>Die zugrunde liegende Vorschau bleibt unverändert.</li>
+                        <li>Der vollständige Datensatz bleibt unverändert.</li>
+                    </ul>
+                </td>
+                <td>Der automatisierte Test zeigte die Vorschau in sortierter Reihenfolge an. Der anschließende Vergleich bestätigte, dass sowohl die zugrunde liegende Vorschau als auch der vollständige DataFrame unverändert geblieben waren.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

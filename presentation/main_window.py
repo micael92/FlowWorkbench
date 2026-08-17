@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QSortFilterProxyModel, Qt
 from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
@@ -105,6 +105,10 @@ class MainWindow(QMainWindow):
         self._status_label = QLabel("Noch kein Datensatz geladen.")
         self._data_table = QTableView()
         self._data_table_model: DataTableModel | None = None
+        self._data_table_proxy_model = QSortFilterProxyModel(self)
+        self._data_table_proxy_model.setSortRole(DataTableModel.SORT_ROLE)
+        self._data_table.setModel(self._data_table_proxy_model)
+        self._data_table.setSortingEnabled(True)
 
         layout = QVBoxLayout()
         layout.addWidget(heading)
@@ -263,7 +267,8 @@ class MainWindow(QMainWindow):
             f"Unendliche Werte: {self._dataset.infinite_value_count}"
         )
         self._data_table_model = DataTableModel(self._dataset.preview)
-        self._data_table.setModel(self._data_table_model)
+        self._data_table_proxy_model.setSourceModel(self._data_table_model)
+        self._data_table_proxy_model.sort(-1)
 
     def _select_and_calculate_statistics(self) -> None:
         """Lässt ein numerisches Merkmal auswählen und zeigt seine Kennzahlen."""
