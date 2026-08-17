@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QFileDialog,
+    QHBoxLayout,
     QInputDialog,
     QLabel,
     QListWidget,
@@ -110,15 +111,22 @@ class MainWindow(QMainWindow):
         self._data_table.setModel(self._data_table_proxy_model)
         self._data_table.setSortingEnabled(True)
 
+        sidebar_layout = QVBoxLayout()
+        sidebar_layout.addWidget(self._status_label)
+        sidebar_layout.addWidget(import_button)
+        sidebar_layout.addWidget(self._statistics_button)
+        sidebar_layout.addWidget(self._label_distribution_button)
+        sidebar_layout.addWidget(self._remove_features_button)
+        sidebar_layout.addWidget(self._export_button)
+        sidebar_layout.addStretch()
+
+        content_layout = QHBoxLayout()
+        content_layout.addLayout(sidebar_layout)
+        content_layout.addWidget(self._data_table, 1)
+
         layout = QVBoxLayout()
         layout.addWidget(heading)
-        layout.addWidget(import_button)
-        layout.addWidget(self._statistics_button)
-        layout.addWidget(self._label_distribution_button)
-        layout.addWidget(self._remove_features_button)
-        layout.addWidget(self._export_button)
-        layout.addWidget(self._status_label)
-        layout.addWidget(self._data_table, 1)
+        layout.addLayout(content_layout, 1)
 
         central_widget = QWidget()
         central_widget.setLayout(layout)
