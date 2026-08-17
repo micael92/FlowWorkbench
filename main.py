@@ -6,6 +6,7 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
+from application.calculate_label_distribution import CalculateLabelDistribution
 from application.calculate_statistics import CalculateStatistics
 from application.export_dataset import ExportDataset
 from application.import_dataset import ImportDataset
@@ -20,10 +21,15 @@ def main() -> int:
     loader = DatasetLoader()
     import_dataset = ImportDataset(loader)
     calculate_statistics = CalculateStatistics()
+    calculate_label_distribution = CalculateLabelDistribution()
     remove_features = RemoveFeatures()
     export_dataset = ExportDataset()
     window = MainWindow(
-        import_dataset, calculate_statistics, remove_features, export_dataset
+        import_dataset,
+        calculate_statistics,
+        calculate_label_distribution,
+        remove_features,
+        export_dataset,
     )
     window.show()
     return app.exec()

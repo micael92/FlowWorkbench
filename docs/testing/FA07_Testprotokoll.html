@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testprotokoll FA07 – Labelverteilung anzeigen</title>
+    <style>
+        :root {
+            color: #1f2933;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+        }
+
+        body {
+            margin: 0;
+            background: #ffffff;
+        }
+
+        main {
+            max-width: 277mm;
+            margin: 0 auto;
+            padding: 10mm;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #17365d;
+            font-size: 21px;
+        }
+
+        h2 {
+            margin: 12px 0 5px;
+            color: #17365d;
+            font-size: 14px;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .summary div {
+            padding: 7px 9px;
+            border: 1px solid #9aa5b1;
+            background: #f5f7fa;
+        }
+
+        .summary strong {
+            display: block;
+            margin-bottom: 2px;
+            color: #17365d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 9px;
+        }
+
+        th,
+        td {
+            padding: 6px;
+            border: 1px solid #7b8794;
+            vertical-align: top;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        th {
+            color: #ffffff;
+            background: #17365d;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f5f7fa;
+        }
+
+        .id,
+        .status {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .passed {
+            color: #166534;
+        }
+
+        .not-run {
+            color: #92400e;
+        }
+
+        ol,
+        ul {
+            margin: 0;
+            padding-left: 16px;
+        }
+
+        p {
+            margin: 0 0 5px;
+            line-height: 1.4;
+        }
+
+        .test-summary {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+            padding: 7px 9px;
+            border: 1px solid #9aa5b1;
+            background: #f5f7fa;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+
+        @media print {
+            main {
+                max-width: none;
+                padding: 0;
+            }
+
+            tr {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Testprotokoll FA07 – Labelverteilung anzeigen</h1>
+
+    <section class="summary" aria-label="Zusammenfassung">
+        <div><strong>Projekt</strong>FlowWorkbench</div>
+        <div><strong>Testdatum</strong>17.08.2026</div>
+        <div><strong>Gesamtergebnis</strong><span class="passed">3 bestanden</span>, 0 fehlgeschlagen, 0 nicht ausgeführt<br>Vollständige Testsuite: 43 bestanden</div>
+    </section>
+
+    <table>
+        <colgroup>
+            <col style="width: 7%">
+            <col style="width: 13%">
+            <col style="width: 15%">
+            <col style="width: 18%">
+            <col style="width: 18%">
+            <col style="width: 21%">
+            <col style="width: 8%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Testfall-ID</th>
+                <th>Kurzbeschreibung</th>
+                <th>Vorbedingungen</th>
+                <th>Eingabedaten / Aktionen</th>
+                <th>Erwartetes Ergebnis</th>
+                <th>Tatsächliches Ergebnis</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="id">FA07-T01</td>
+                <td>Labelverteilung eines geladenen Datensatzes anzeigen</td>
+                <td>
+                    <ul>
+                        <li>FlowWorkbench ist gestartet.</li>
+                        <li>Ein gültiger CSV-Datensatz mit mehreren unterschiedlichen Labels steht zur Verfügung.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>CSV-Datensatz importieren.</li>
+                        <li>Funktion „Labelverteilung anzeigen“ aufrufen.</li>
+                        <li>Numerische Darstellung und Diagramm prüfen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li>Für jedes vorhandene Label werden absolute Häufigkeit und Prozentanteil angezeigt.</li>
+                        <li>Die Labelverteilung wird zusätzlich als horizontales Balkendiagramm dargestellt.</li>
+                        <li>Die Anwendung bleibt bedienbar und der Dialog kann geschlossen werden.</li>
+                    </ul>
+                </td>
+                <td>Der Datensatz wurde erfolgreich importiert und die Funktion „Labelverteilung anzeigen“ aufgerufen. Die numerische Verteilung mit Häufigkeiten und Prozentanteilen sowie das horizontale Balkendiagramm wurden wie erwartet angezeigt.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+            <tr>
+                <td class="id">FA07-T02</td>
+                <td>Bekannte Labelhäufigkeiten und Prozentanteile korrekt berechnen</td>
+                <td>
+                    <ul>
+                        <li>Ein Datensatz mit vier Zeilen und festgelegter Label-Spalte liegt vor.</li>
+                        <li>Die Label-Spalte enthält dreimal <code>BENIGN</code> und einmal <code>Attack</code>.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Labelverteilung berechnen.</li>
+                        <li>Absolute Häufigkeiten und Prozentanteile prüfen.</li>
+                        <li>Summe der Häufigkeiten mit der Zeilenzahl vergleichen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li><code>BENIGN</code>: 3 beziehungsweise 75 %.</li>
+                        <li><code>Attack</code>: 1 beziehungsweise 25 %.</li>
+                        <li>Die Summe der Häufigkeiten beträgt 4 und entspricht der Zeilenzahl.</li>
+                        <li>Die Prozentanteile ergeben zusammen 100 %.</li>
+                    </ul>
+                </td>
+                <td>Die Verteilung wurde mit 3 <code>BENIGN</code>-Einträgen (75 %) und 1 <code>Attack</code>-Eintrag (25 %) korrekt berechnet. Die Häufigkeiten entsprachen insgesamt allen vier Datensatzzeilen und die Anteile ergaben 100 %.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+            <tr>
+                <td class="id">FA07-T03</td>
+                <td>Fehlende Labelwerte in der Verteilung mitzählen</td>
+                <td>
+                    <ul>
+                        <li>Ein Datensatz mit vier Zeilen und festgelegter Label-Spalte liegt vor.</li>
+                        <li>Die Label-Spalte enthält zweimal <code>BENIGN</code> und zwei fehlende Werte.</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Labelverteilung berechnen und anzeigen.</li>
+                        <li>Verteilung für vorhandene und fehlende Labelwerte prüfen.</li>
+                    </ol>
+                </td>
+                <td>
+                    <ul>
+                        <li><code>BENIGN</code> wird mit 2 beziehungsweise 50 % ausgewiesen.</li>
+                        <li>Die beiden fehlenden Labelwerte werden gemeinsam mit 2 beziehungsweise 50 % mitgezählt.</li>
+                        <li>Fehlende Werte erscheinen in der Darstellung unter der Bezeichnung „Fehlend“.</li>
+                        <li>Die Summe der Häufigkeiten entspricht weiterhin allen vier Zeilen.</li>
+                    </ul>
+                </td>
+                <td>Die fehlenden Labelwerte wurden nicht ausgelassen, sondern als eigene Gruppe mit 2 Einträgen und 50 % berücksichtigt. Im Dialog wurde diese Gruppe als „Fehlend“ angezeigt. Zusammen mit den 2 <code>BENIGN</code>-Einträgen wurden alle vier Zeilen erfasst.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+        </tbody>
+    </table>
+
+</main>
+</body>
+</html>

@@ -19,3 +19,7 @@ class StatisticsCalculationError(FlowWorkbenchError):
 
 class FeatureRemovalError(FlowWorkbenchError):
     """Ausgewählte Merkmale konnten nicht entfernt werden."""
+
+
+class LabelDistributionError(FlowWorkbenchError):
+    """Die Labelverteilung konnte nicht berechnet werden."""

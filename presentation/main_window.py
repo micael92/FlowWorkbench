@@ -21,11 +21,13 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from application.calculate_label_distribution import CalculateLabelDistribution
 from application.calculate_statistics import CalculateStatistics
 from application.exceptions import (
     DatasetExportError,
     DatasetLoadError,
     FeatureRemovalError,
+    LabelDistributionError,
     StatisticsCalculationError,
 )
 from application.flow_dataset import FlowDataset
@@ -34,6 +36,7 @@ from application.import_dataset import ImportDataset
 from application.remove_features import RemoveFeatures
 from application.statistic_result import StatisticResult
 from presentation.data_table_model import DataTableModel
+from presentation.label_distribution_dialog import LabelDistributionDialog
 
 
 def format_byte_size(size_bytes: int) -> str:
@@ -56,12 +59,14 @@ class MainWindow(QMainWindow):
         self,
         import_dataset: ImportDataset,
         calculate_statistics: CalculateStatistics,
+        calculate_label_distribution: CalculateLabelDistribution,
         remove_features: RemoveFeatures,
         export_dataset: ExportDataset,
     ) -> None:
         super().__init__()
         self._import_dataset = import_dataset
         self._calculate_statistics = calculate_statistics
+        self._calculate_label_distribution = calculate_label_distribution
         self._remove_features = remove_features
         self._export_dataset = export_dataset
         self._dataset: FlowDataset | None = None
@@ -78,6 +83,14 @@ class MainWindow(QMainWindow):
         self._statistics_button = QPushButton("Kennzahlen berechnen")
         self._statistics_button.setEnabled(False)
         self._statistics_button.clicked.connect(self._select_and_calculate_statistics)
+
+        self._label_distribution_button = QPushButton(
+            "Labelverteilung anzeigen"
+        )
+        self._label_distribution_button.setEnabled(False)
+        self._label_distribution_button.clicked.connect(
+            self._show_label_distribution
+        )
 
         self._remove_features_button = QPushButton("Merkmale entfernen")
         self._remove_features_button.setEnabled(False)
@@ -97,6 +110,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(heading)
         layout.addWidget(import_button)
         layout.addWidget(self._statistics_button)
+        layout.addWidget(self._label_distribution_button)
         layout.addWidget(self._remove_features_button)
         layout.addWidget(self._export_button)
         layout.addWidget(self._status_label)
@@ -138,6 +152,7 @@ class MainWindow(QMainWindow):
 
         self._dataset = result
         self._statistics_button.setEnabled(True)
+        self._label_distribution_button.setEnabled(True)
         self._remove_features_button.setEnabled(True)
         self._export_button.setEnabled(True)
         self._display_dataset()
@@ -288,6 +303,20 @@ class MainWindow(QMainWindow):
             "Statistische Kennzahlen",
             self._format_statistics(result),
         )
+
+    def _show_label_distribution(self) -> None:
+        """Berechnet und zeigt die Verteilung der aktuellen Labels."""
+        if self._dataset is None:
+            return
+
+        try:
+            distribution = self._calculate_label_distribution.execute(self._dataset)
+        except LabelDistributionError as error:
+            QMessageBox.warning(self, "Anzeige nicht möglich", str(error))
+            return
+
+        dialog = LabelDistributionDialog(distribution, self)
+        dialog.exec()
 
     @staticmethod
     def _format_statistics(result: StatisticResult) -> str:

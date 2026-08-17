@@ -55,9 +55,9 @@ Lösungen bevorzugt.
 
 | Schicht | Verantwortung |
 |---|---|
-| `presentation` | Grafische Benutzeroberfläche, Dialoge und Darstellung |
+| `presentation` | Grafische Benutzeroberfläche, Dialoge, Darstellung und Erzeugung der GUI-Diagramme |
 | `application` | Anwendungsfälle, Ergebnisobjekte, Ablaufsteuerung und anwendungsbezogene Fehler |
-| `infrastructure` | Dateizugriff sowie technische Umsetzung von Import, Export, Datenverarbeitung und Visualisierung |
+| `infrastructure` | Dateizugriff sowie technische Umsetzung von Import und Export |
 | `tests` | Automatisierte Tests der Anwendung |
 
 Technische Details und Architekturentscheidungen werden in
