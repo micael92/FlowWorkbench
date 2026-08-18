@@ -2,13 +2,8 @@
 
 from __future__ import annotations
 
-import numpy as np
-
 from application.exceptions import FeatureRemovalError
 from application.flow_dataset import FlowDataset
-
-
-DEFAULT_PREVIEW_ROW_COUNT = 1000
 
 
 class RemoveFeatures:
@@ -36,16 +31,6 @@ class RemoveFeatures:
             )
 
         dataset.dataframe.drop(columns=feature_names, inplace=True)
-
-        dataset.row_count, dataset.column_count = dataset.dataframe.shape
-        dataset.memory_size_bytes = int(
-            dataset.dataframe.memory_usage(index=True, deep=True).sum()
-        )
-        dataset.missing_value_count = int(
-            dataset.dataframe.isna().sum().sum()
-        )
-        numeric_data = dataset.dataframe.select_dtypes(include="number")
-        dataset.infinite_value_count = int(np.isinf(numeric_data).sum().sum())
-        dataset.preview = dataset.dataframe.head(DEFAULT_PREVIEW_ROW_COUNT)
+        dataset.refresh_metadata()
 
         return dataset

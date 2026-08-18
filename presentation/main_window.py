@@ -4,19 +4,23 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 from PySide6.QtCore import QSortFilterProxyModel, Qt
 from PySide6.QtWidgets import (
+    QComboBox,
     QDialog,
     QDialogButtonBox,
     QFileDialog,
     QHBoxLayout,
     QInputDialog,
     QLabel,
+    QLineEdit,
     QListWidget,
     QListWidgetItem,
     QMainWindow,
     QMessageBox,
     QPushButton,
+    QRadioButton,
     QTableView,
     QVBoxLayout,
     QWidget,
@@ -28,7 +32,9 @@ from application.exceptions import (
     DatasetExportError,
     DatasetLoadError,
     FeatureRemovalError,
+    InfiniteValueTreatmentError,
     LabelDistributionError,
+    MissingValueTreatmentError,
     StatisticsCalculationError,
 )
 from application.flow_dataset import FlowDataset
@@ -36,6 +42,8 @@ from application.export_dataset import ExportDataset
 from application.import_dataset import ImportDataset
 from application.remove_features import RemoveFeatures
 from application.statistic_result import StatisticResult
+from application.treat_infinite_values import TreatInfiniteValues
+from application.treat_missing_values import TreatMissingValues
 from presentation.data_table_model import DataTableModel
 from presentation.label_distribution_dialog import LabelDistributionDialog
 
@@ -63,12 +71,16 @@ class MainWindow(QMainWindow):
         calculate_label_distribution: CalculateLabelDistribution,
         remove_features: RemoveFeatures,
         export_dataset: ExportDataset,
+        treat_missing_values: TreatMissingValues,
+        treat_infinite_values: TreatInfiniteValues,
     ) -> None:
         super().__init__()
         self._import_dataset = import_dataset
         self._calculate_statistics = calculate_statistics
         self._calculate_label_distribution = calculate_label_distribution
         self._remove_features = remove_features
+        self._treat_missing_values = treat_missing_values
+        self._treat_infinite_values = treat_infinite_values
         self._export_dataset = export_dataset
         self._dataset: FlowDataset | None = None
 
@@ -99,6 +111,18 @@ class MainWindow(QMainWindow):
             self._select_and_remove_features
         )
 
+        self._treat_missing_values_button = QPushButton("NaN behandeln")
+        self._treat_missing_values_button.setEnabled(False)
+        self._treat_missing_values_button.clicked.connect(
+            self._select_and_treat_missing_values
+        )
+
+        self._treat_infinite_values_button = QPushButton("Inf behandeln")
+        self._treat_infinite_values_button.setEnabled(False)
+        self._treat_infinite_values_button.clicked.connect(
+            self._select_and_treat_infinite_values
+        )
+
         self._export_button = QPushButton("Datensatz exportieren")
         self._export_button.setEnabled(False)
         self._export_button.clicked.connect(self._select_and_export_dataset)
@@ -117,6 +141,8 @@ class MainWindow(QMainWindow):
         sidebar_layout.addWidget(self._statistics_button)
         sidebar_layout.addWidget(self._label_distribution_button)
         sidebar_layout.addWidget(self._remove_features_button)
+        sidebar_layout.addWidget(self._treat_missing_values_button)
+        sidebar_layout.addWidget(self._treat_infinite_values_button)
         sidebar_layout.addWidget(self._export_button)
         sidebar_layout.addStretch()
 
@@ -166,8 +192,131 @@ class MainWindow(QMainWindow):
         self._statistics_button.setEnabled(True)
         self._label_distribution_button.setEnabled(True)
         self._remove_features_button.setEnabled(True)
+        self._treat_missing_values_button.setEnabled(True)
+        self._treat_infinite_values_button.setEnabled(True)
         self._export_button.setEnabled(True)
         self._display_dataset()
+
+    def _select_and_treat_missing_values(self) -> None:
+        """Lässt eine Spalte und die Behandlung ihrer NaN-Werte auswählen."""
+        if self._dataset is None:
+            return
+
+        columns = [
+            str(column)
+            for column in self._dataset.dataframe.columns
+            if self._dataset.dataframe[column].isna().any()
+        ]
+        if not columns:
+            QMessageBox.information(
+                self, "Keine NaN-Werte", "Der Datensatz enthält keine NaN-Werte."
+            )
+            return
+
+        selection = self._show_value_treatment_dialog("NaN behandeln", columns)
+        if selection is None:
+            return
+        column_name, operation, replacement_value = selection
+        affected_count = int(self._dataset.dataframe[column_name].isna().sum())
+
+        try:
+            self._treat_missing_values.execute(
+                self._dataset, column_name, operation, replacement_value
+            )
+        except MissingValueTreatmentError as error:
+            QMessageBox.warning(self, "Behandlung nicht möglich", str(error))
+            return
+
+        self._display_dataset()
+        action = "entfernt" if operation == "remove" else "ersetzt"
+        QMessageBox.information(
+            self,
+            "NaN-Werte behandelt",
+            f"{affected_count} fehlende Werte wurden {action}.",
+        )
+
+    def _select_and_treat_infinite_values(self) -> None:
+        """Lässt eine numerische Spalte und die Behandlung ihrer Inf-Werte wählen."""
+        if self._dataset is None:
+            return
+
+        numeric_data = self._dataset.dataframe.select_dtypes(include="number")
+        columns = [
+            str(column)
+            for column in numeric_data.columns
+            if np.isinf(numeric_data[column]).any()
+        ]
+        if not columns:
+            QMessageBox.information(
+                self,
+                "Keine Inf-Werte",
+                "Der Datensatz enthält keine unendlichen Werte.",
+            )
+            return
+
+        selection = self._show_value_treatment_dialog("Inf behandeln", columns)
+        if selection is None:
+            return
+        column_name, operation, replacement_value = selection
+        affected_count = int(np.isinf(self._dataset.dataframe[column_name]).sum())
+
+        try:
+            self._treat_infinite_values.execute(
+                self._dataset, column_name, operation, replacement_value
+            )
+        except InfiniteValueTreatmentError as error:
+            QMessageBox.warning(self, "Behandlung nicht möglich", str(error))
+            return
+
+        self._display_dataset()
+        action = "entfernt" if operation == "remove" else "ersetzt"
+        QMessageBox.information(
+            self,
+            "Inf-Werte behandelt",
+            f"{affected_count} unendliche Werte wurden {action}.",
+        )
+
+    def _show_value_treatment_dialog(
+        self, title: str, columns: list[str]
+    ) -> tuple[str, str, str | None] | None:
+        """Zeigt den gemeinsamen kleinen Auswahldialog für NaN und Inf."""
+        dialog = QDialog(self)
+        dialog.setWindowTitle(title)
+
+        column_selection = QComboBox(dialog)
+        column_selection.addItems(columns)
+        remove_option = QRadioButton("Betroffene Zeilen entfernen", dialog)
+        replace_option = QRadioButton("Werte ersetzen durch:", dialog)
+        replacement_input = QLineEdit(dialog)
+        replacement_input.setEnabled(False)
+        replace_option.toggled.connect(replacement_input.setEnabled)
+        remove_option.setChecked(True)
+
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Apply
+            | QDialogButtonBox.StandardButton.Cancel,
+            parent=dialog,
+        )
+        buttons.button(QDialogButtonBox.StandardButton.Apply).clicked.connect(
+            dialog.accept
+        )
+        buttons.rejected.connect(dialog.reject)
+
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(QLabel("Spalte:"))
+        layout.addWidget(column_selection)
+        layout.addWidget(QLabel("Behandlung:"))
+        layout.addWidget(remove_option)
+        layout.addWidget(replace_option)
+        layout.addWidget(replacement_input)
+        layout.addWidget(buttons)
+
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return None
+
+        if replace_option.isChecked():
+            return column_selection.currentText(), "replace", replacement_input.text()
+        return column_selection.currentText(), "remove", None
 
     def _select_and_export_dataset(self) -> None:
         """Lässt einen Zielpfad auswählen und exportiert den aktuellen Datensatz."""

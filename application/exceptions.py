@@ -21,5 +21,13 @@ class FeatureRemovalError(FlowWorkbenchError):
     """Ausgewählte Merkmale konnten nicht entfernt werden."""
 
 
+class MissingValueTreatmentError(FlowWorkbenchError):
+    """Fehlende Werte konnten nicht behandelt werden."""
+
+
+class InfiniteValueTreatmentError(FlowWorkbenchError):
+    """Unendliche Werte konnten nicht behandelt werden."""
+
+
 class LabelDistributionError(FlowWorkbenchError):
     """Die Labelverteilung konnte nicht berechnet werden."""

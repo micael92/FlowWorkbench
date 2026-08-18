@@ -3,8 +3,8 @@
 from pathlib import Path
 
 import pandas as pd
-from PySide6.QtCore import QSortFilterProxyModel, Qt
-from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QSortFilterProxyModel, Qt, QTimer
+from PySide6.QtWidgets import QApplication, QDialog, QDialogButtonBox
 
 from application.flow_dataset import FlowDataset
 from presentation.data_table_model import DataTableModel
@@ -109,7 +109,7 @@ def test_proxy_sort_keeps_preview_and_complete_dataframe_unchanged() -> None:
 
 def test_main_window_uses_sortable_proxy_for_dataset_preview() -> None:
     app = QApplication.instance() or QApplication([])
-    window = MainWindow(None, None, None, None, None)
+    window = MainWindow(None, None, None, None, None, None, None)
     dataframe = pd.DataFrame({"packets": [10, 2, 1], "Label": ["a", "b", "c"]})
     window._dataset = FlowDataset(
         source=Path("dataset.csv"),
@@ -130,5 +130,24 @@ def test_main_window_uses_sortable_proxy_for_dataset_preview() -> None:
     assert window._data_table.model() is window._data_table_proxy_model
     assert displayed_column(window._data_table_proxy_model, 0) == ["1", "2", "10"]
 
+    window.close()
+    app.processEvents()
+
+
+def test_value_treatment_dialog_accepts_apply_button() -> None:
+    app = QApplication.instance() or QApplication([])
+    window = MainWindow(None, None, None, None, None, None, None)
+
+    def click_apply() -> None:
+        dialog = app.activeModalWidget()
+        assert isinstance(dialog, QDialog)
+        buttons = dialog.findChild(QDialogButtonBox)
+        assert buttons is not None
+        buttons.button(QDialogButtonBox.StandardButton.Apply).click()
+
+    QTimer.singleShot(0, click_apply)
+    result = window._show_value_treatment_dialog("NaN behandeln", ["Duration"])
+
+    assert result == ("Duration", "remove", None)
     window.close()
     app.processEvents()

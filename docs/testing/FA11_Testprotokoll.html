@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testprotokoll FA11 – Fehlende Werte behandeln</title>
+    <style>
+        :root { color: #1f2933; font-family: Arial, Helvetica, sans-serif; font-size: 11px; }
+        body { margin: 0; background: #ffffff; }
+        main { max-width: 277mm; margin: 0 auto; padding: 10mm; }
+        h1 { margin: 0 0 8px; color: #17365d; font-size: 21px; }
+        .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+        .summary div { padding: 7px 9px; border: 1px solid #9aa5b1; background: #f5f7fa; }
+        .summary strong { display: block; margin-bottom: 2px; color: #17365d; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9px; }
+        th, td { padding: 6px; border: 1px solid #7b8794; vertical-align: top; line-height: 1.3; overflow-wrap: anywhere; }
+        th { color: #ffffff; background: #17365d; text-align: left; }
+        tbody tr:nth-child(even) { background: #f5f7fa; }
+        .id, .status { text-align: center; font-weight: bold; }
+        .passed { color: #166534; }
+        ol, ul { margin: 0; padding-left: 16px; }
+        @page { size: A4 landscape; margin: 8mm; }
+        @media print { main { max-width: none; padding: 0; } tr { break-inside: avoid; } }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Testprotokoll FA11 – Fehlende Werte behandeln</h1>
+
+    <section class="summary" aria-label="Zusammenfassung">
+        <div><strong>Projekt</strong>FlowWorkbench</div>
+        <div><strong>Testdatum</strong>18.08.2026</div>
+        <div><strong>Gesamtergebnis</strong><span class="passed">3 bestanden</span>, 0 fehlgeschlagen, 0 nicht ausgeführt<br>Vollständige Testsuite: 58 bestanden</div>
+    </section>
+
+    <table>
+        <colgroup>
+            <col style="width: 7%"><col style="width: 13%"><col style="width: 15%">
+            <col style="width: 18%"><col style="width: 18%"><col style="width: 21%"><col style="width: 8%">
+        </colgroup>
+        <thead><tr>
+            <th>Testfall-ID</th><th>Kurzbeschreibung</th><th>Vorbedingungen</th>
+            <th>Eingabedaten / Aktionen</th><th>Erwartetes Ergebnis</th>
+            <th>Tatsächliches Ergebnis</th><th>Status</th>
+        </tr></thead>
+        <tbody>
+            <tr>
+                <td class="id">FA11-T01</td>
+                <td>Fehlende Werte über die Benutzeroberfläche entfernen und ersetzen</td>
+                <td><ul><li>FlowWorkbench ist gestartet.</li><li>Ein Datensatz mit NaN-Werten ist geladen.</li></ul></td>
+                <td><ol><li>„NaN behandeln“ öffnen.</li><li>Eine betroffene Spalte auswählen und die betroffenen Zeilen entfernen.</li><li>Die Behandlung erneut für NaN-Werte aufrufen.</li><li>NaN durch einen konstanten Benutzerwert ersetzen.</li><li>Jeweils „Apply“ auswählen.</li></ol></td>
+                <td><ul><li>Beim Entfernen verschwinden genau die Zeilen mit NaN in der ausgewählten Spalte.</li><li>Beim Ersetzen werden die NaN-Werte durch den eingegebenen konstanten Wert ersetzt.</li><li>Die aktualisierte Vorschau und die Datensatzinformationen werden angezeigt.</li></ul></td>
+                <td>Der manuelle Test wurde erfolgreich durchgeführt. Betroffene Zeilen wurden nach Auswahl der Spalte entfernt. In einem weiteren Durchlauf wurden NaN-Werte durch den eingegebenen konstanten Wert ersetzt. Die Änderungen waren anschließend in der aktualisierten Hauptansicht sichtbar.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+            <tr>
+                <td class="id">FA11-T02</td>
+                <td>Nur Zeilen mit NaN in der ausgewählten Spalte entfernen</td>
+                <td><ul><li>Ein Datensatz mit drei Zeilen liegt vor.</li><li>Die Spalte <code>Duration</code> enthält einen NaN-Wert; eine andere Spalte enthält einen weiteren NaN-Wert in einer nicht betroffenen Zeile.</li></ul></td>
+                <td><ol><li>Spalte <code>Duration</code> auswählen.</li><li>Behandlung „Betroffene Zeilen entfernen“ ausführen.</li><li>Datensatz, Vorschau und Datensatzinformationen prüfen.</li></ol></td>
+                <td><ul><li>Nur die Zeile mit NaN in <code>Duration</code> wird entfernt.</li><li>Andere Werte und NaN-Werte außerhalb dieser Zeile bleiben unverändert.</li><li>Zeilenanzahl, Vorschau und Anzahl fehlender Werte werden aktualisiert.</li></ul></td>
+                <td>Der automatisierte Test entfernte ausschließlich die betroffene Zeile. Zwei Zeilen blieben erhalten, der NaN-Wert der anderen Spalte blieb bestehen und die Zeilenanzahl, Vorschau sowie Anzahl fehlender Werte wurden korrekt neu berechnet.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+            <tr>
+                <td class="id">FA11-T03</td>
+                <td>NaN durch einen konstanten Wert ersetzen</td>
+                <td><ul><li>Ein Datensatz mit der numerischen Spalte <code>Duration</code> liegt vor.</li><li>Die Spalte enthält die Werte <code>1</code>, NaN und <code>3</code>.</li></ul></td>
+                <td><ol><li>Spalte <code>Duration</code> auswählen.</li><li>Ersetzung mit dem konstanten Wert <code>0</code> ausführen.</li><li>Ergebnis und Datensatzinformationen prüfen.</li></ol></td>
+                <td><ul><li>Der NaN-Wert wird zu <code>0</code>.</li><li>Die übrigen Werte und andere Spalten bleiben unverändert.</li><li>Die Anzahl fehlender Werte beträgt danach <code>0</code>.</li></ul></td>
+                <td>Der automatisierte Test ergab für <code>Duration</code> die Werte <code>1, 0, 3</code>. Die übrigen Werte blieben unverändert und die Anzahl fehlender Werte wurde auf <code>0</code> aktualisiert.</td>
+                <td class="status passed">Bestanden</td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>
