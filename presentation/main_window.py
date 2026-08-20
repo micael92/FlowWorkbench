@@ -418,7 +418,7 @@ class MainWindow(QMainWindow):
             f"Datei: {self._dataset.source.name}\n"
             f"Zeilen: {self._dataset.row_count}\n"
             f"Spalten: {self._dataset.column_count}\n"
-            "Speichergröße: "
+            "Arbeitsspeicherbedarf: "
             f"{format_byte_size(self._dataset.memory_size_bytes)}\n"
             f"Fehlende Werte: {self._dataset.missing_value_count}\n"
             f"Unendliche Werte: {self._dataset.infinite_value_count}"

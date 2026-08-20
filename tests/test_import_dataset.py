@@ -1,6 +1,7 @@
 """Unit-Tests für den Anwendungsfall zum Importieren eines Datensatzes."""
 
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -9,7 +10,7 @@ import pytest
 from application.exceptions import DatasetLoadError
 from application.flow_dataset import FlowDataset
 from application.import_dataset import ImportDataset
-from infrastructure.dataset_loader import DatasetLoader
+from infrastructure.dataset_loader import MAX_CSV_FILE_SIZE_BYTES, DatasetLoader
 
 
 class RecordingLoader(DatasetLoader):
@@ -153,3 +154,17 @@ def test_import_propagates_dataset_load_error(tmp_path: Path) -> None:
 
     with pytest.raises(DatasetLoadError):
         ImportDataset(DatasetLoader()).execute(missing_path)
+
+
+def test_import_reports_500_mib_limit_for_oversized_file(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    path = Path("oversized.csv")
+    monkeypatch.setattr(
+        Path,
+        "stat",
+        lambda self: SimpleNamespace(st_size=MAX_CSV_FILE_SIZE_BYTES + 1),
+    )
+
+    with pytest.raises(DatasetLoadError, match=r"zu groß.*500 MiB"):
+        ImportDataset(DatasetLoader()).execute(path)

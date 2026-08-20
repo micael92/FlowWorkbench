@@ -36,7 +36,7 @@ class ImportDataset:
             dataframe = self._loader.load(path)
         except (OSError, pd.errors.ParserError) as error:
             raise DatasetLoadError(
-                f"Datensatz konnte nicht geladen werden: {path}"
+                f"Datensatz konnte nicht geladen werden: {path}. {error}"
             ) from error
 
         row_count, column_count = dataframe.shape
