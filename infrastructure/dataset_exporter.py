@@ -7,6 +7,9 @@ from pathlib import Path
 import pandas as pd
 
 
-def export_csv(dataframe: pd.DataFrame, path: Path) -> None:
-    """Exportiert einen DataFrame als CSV-Datei."""
-    dataframe.to_csv(path, index=False)
+class DatasetExporter:
+    """Exportiert Datensätze mit pandas."""
+
+    def export_csv(self, dataframe: pd.DataFrame, path: Path) -> None:
+        """Exportiert einen DataFrame als CSV-Datei."""
+        dataframe.to_csv(path, index=False)

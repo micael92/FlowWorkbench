@@ -13,6 +13,7 @@ from application.import_dataset import ImportDataset
 from application.remove_features import RemoveFeatures
 from application.treat_infinite_values import TreatInfiniteValues
 from application.treat_missing_values import TreatMissingValues
+from infrastructure.dataset_exporter import DatasetExporter
 from infrastructure.dataset_loader import DatasetLoader
 from presentation.main_window import MainWindow
 
@@ -27,7 +28,8 @@ def main() -> int:
     remove_features = RemoveFeatures()
     treat_missing_values = TreatMissingValues()
     treat_infinite_values = TreatInfiniteValues()
-    export_dataset = ExportDataset()
+    exporter = DatasetExporter()
+    export_dataset = ExportDataset(exporter)
     window = MainWindow(
         import_dataset,
         calculate_statistics,

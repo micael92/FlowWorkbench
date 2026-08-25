@@ -6,11 +6,14 @@ from pathlib import Path
 
 from application.exceptions import DatasetExportError
 from application.flow_dataset import FlowDataset
-from infrastructure.dataset_exporter import export_csv
+from infrastructure.dataset_exporter import DatasetExporter
 
 
 class ExportDataset:
     """Exportiert den aktuellen Bearbeitungsstand als CSV-Datei."""
+
+    def __init__(self, exporter: DatasetExporter) -> None:
+        self._exporter = exporter
 
     def execute(self, dataset: FlowDataset, path: Path) -> None:
         """Schreibt den DataFrame, ohne die ursprüngliche Datei zu überschreiben."""
@@ -28,7 +31,7 @@ class ExportDataset:
             )
 
         try:
-            export_csv(dataset.dataframe, path)
+            self._exporter.export_csv(dataset.dataframe, path)
         except OSError as error:
             raise DatasetExportError(
                 f"Datensatz konnte nicht exportiert werden: {path}"
