@@ -1,7 +1,0 @@
-duration,Src IP,Src Port,Dst IP,Dst Port,Protocol,Label
-10,x,x,x,nan,x,BENIGN
-10,x,x,x,nan,x,BENIGN
-inf,x,x,x,x,x,BENIGN
--inf,x,x,x,x,x,BENIGN
-inf,x,x,x,nan,x,BENIGN
--inf,x,x,x,nan,x,BENIGN

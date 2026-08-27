@@ -9,7 +9,11 @@ venv/
 
 # Tests und Analyse
 .pytest_cache/
+.pytest_tmp/
+.ruff_cache/
+.mypy_cache/
 .coverage
+coverage.xml
 htmlcov/
 
 # Build-Artefakte
@@ -24,8 +28,5 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Lokale Agenten-Anweisungen
-AGENTS.md
-README.md
-DECISIONS.md
-FlowWorkbench_Phase1_Textfassung.txt
+# Test-Datensätze
+*.csv
