@@ -1,0 +1,16 @@
+FlowWorkbench synthetic test dataset
+====================================
+
+File: FlowWorkbench-synthetic-testdata.csv
+
+This dataset was created specifically for testing and demonstrating
+FlowWorkbench. All flow records, identifiers, ports, measurements and labels
+are artificial. The IP addresses use the documentation networks reserved by
+RFC 5737 and do not represent observed network traffic.
+
+The dataset contains deliberately inserted missing and infinite values so that
+FlowWorkbench's preprocessing functions can be demonstrated.
+
+This synthetic dataset may be used, copied, modified and redistributed without
+restriction. It does not contain data from CIC-IDS2017 or another third-party
+dataset.
