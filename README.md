@@ -38,49 +38,16 @@ FlowWorkbench verarbeitet bereits vorhandene flowbasierte Datensätze.
 
 Die Anwendung verwendet eine Schichtenarchitektur mit drei Bereichen:
 
-```text
-presentation
-     │
-     ▼
-application
-     │
-     ▼
-infrastructure
-```
-
-Die Schichten besitzen klar voneinander getrennte Verantwortlichkeiten. Die Schichten dienen der übersichtlichen Trennung der Verantwortlichkeiten.
-Dabei wird bewusst keine vollständig strikte Clean-Architecture-Umsetzung
-angestrebt. Für den begrenzten Projektumfang werden einfache und verständliche
-Lösungen bevorzugt.
-
 | Schicht | Verantwortung |
 |---|---|
 | `presentation` | Grafische Benutzeroberfläche, Dialoge, Darstellung und Erzeugung der GUI-Diagramme |
 | `application` | Anwendungsfälle, Ergebnisobjekte, Ablaufsteuerung und anwendungsbezogene Fehler |
 | `infrastructure` | Dateizugriff sowie technische Umsetzung von Import und Export |
-| `tests` | Automatisierte Tests der Anwendung |
 
-Technische Details und Architekturentscheidungen werden in
-[`DECISIONS.md`](DECISIONS.md) dokumentiert.
-
-## Projektstruktur
-
-```text
-FlowWorkbench/
-├── application/
-├── infrastructure/
-├── presentation/
-├── tests/
-├── sample_data/
-├── docs/
-│   └── phase1/
-├── AGENTS.md
-├── DECISIONS.md
-├── LICENSE
-├── main.py
-├── pyproject.toml
-└── README.md
-```
+Die Schichten besitzen klar voneinander getrennte Verantwortlichkeiten. Die Schichten dienen der übersichtlichen Trennung der Verantwortlichkeiten.
+Dabei wird bewusst keine vollständig strikte Clean-Architecture-Umsetzung
+angestrebt. Für den begrenzten Projektumfang werden einfache und verständliche
+Lösungen bevorzugt.
 
 ## Voraussetzungen
 
@@ -118,28 +85,3 @@ Der aktuelle Technologie-Stack umfasst insbesondere:
 - pandas
 - Matplotlib
 - pytest
-- Git und GitHub
-
-Weitere Bibliotheken werden nur ergänzt, wenn sie für eine konkrete
-Anforderung erforderlich sind. Die endgültige Technologieübersicht wird im
-Architekturdokument auf Grundlage der tatsächlich eingesetzten Technologien
-erstellt.
-
-## Entwicklungsprozess
-
-Die Entwicklung erfolgt iterativ und in kleinen, nachvollziehbaren Schritten.
-
-Für neue Funktionen gilt grundsätzlich:
-
-1. Anforderung und fachlichen Zweck klären.
-2. betroffenen Anwendungsfall bestimmen.
-3. Verantwortlichkeiten den Schichten zuordnen.
-4. Funktion möglichst klein implementieren.
-5. automatisierte Tests ergänzen.
-6. Ergebnis manuell prüfen.
-7. relevante Entscheidungen dokumentieren.
-
-KI-Werkzeuge und Coding-Agenten können die Implementierung, Fehlersuche,
-Codeanalyse und Testerstellung unterstützen. Architekturentscheidungen,
-Anforderungsprüfung und Verantwortung für den übernommenen Code verbleiben
-beim Projektverantwortlichen.
