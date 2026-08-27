@@ -5,6 +5,7 @@ __pycache__/
 
 # Virtuelle Umgebungen
 .venv/
+.venv-build/
 venv/
 
 # Tests und Analyse
